@@ -2,7 +2,22 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --input: #ffffff;
+  --primary: #059669;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --ring: #059669;
 }
 
 @theme inline {
@@ -14,8 +29,23 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #020617;
+    --foreground: #f8fafc;
+    --card: #0f172a;
+    --card-foreground: #f8fafc;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+    --border: #334155;
+    --input: #0f172a;
+    --primary: #10b981;
+    --primary-foreground: #ffffff;
+    --secondary: #1e293b;
+    --secondary-foreground: #f8fafc;
+    --accent: #1e293b;
+    --accent-foreground: #f8fafc;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --ring: #10b981;
   }
 }
 
@@ -23,4 +53,108 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme transition styles */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Ensure cards and other elements use theme variables */
+.card, [class*="Card"] {
+  background-color: var(--card) !important;
+  color: var(--card-foreground) !important;
+}
+
+/* Ensure text visibility and consistency */
+* {
+  color: inherit;
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+}
+
+/* Ensure proper contrast for all text elements */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--foreground) !important;
+}
+
+p, span, div {
+  color: var(--foreground);
+}
+
+/* Ensure muted text has proper contrast */
+.text-muted, [class*="muted"] {
+  color: var(--muted-foreground) !important;
+}
+
+/* Ensure buttons and interactive elements have proper contrast */
+button, .btn {
+  color: var(--foreground);
+}
+
+/* Ensure form inputs have proper styling */
+input, textarea, select {
+  background-color: var(--input);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+/* Ensure proper border colors */
+.border {
+  border-color: var(--border) !important;
+}
+
+/* Chat message text wrapping */
+.word-break-all {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.chat-message {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow: hidden;
+}
+
+
+
+/* Chat container overflow fix */
+.chat-container {
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.chat-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 3px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.8);
+}
+
+.chat-bubble {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow: hidden;
 }
