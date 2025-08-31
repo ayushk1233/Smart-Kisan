@@ -1,14 +1,16 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css'
-import { ThemeProvider } from '@/contexts/ThemeContext'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { ThemeProvider } from '@/contexts/ThemeContext'
+import { DynamicBackground } from '@/components/DynamicBackground'
+import { Navbar } from '@/components/Navbar'
+import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Smart Kisan - Intelligent Farming Solutions',
-  description: 'Complete farming management solution with AI crop advisor, weather forecasting, market analytics, and inventory management.',
+  title: 'Smart Kisan - Agriculture Management',
+  description: 'An AI-powered agriculture management platform for modern farmers',
 }
 
 export default function RootLayout({
@@ -17,11 +19,18 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen`}>
         <AuthProvider>
           <ThemeProvider>
-            {children}
+            <div className="min-h-screen" suppressHydrationWarning>
+              <DynamicBackground>
+                <Navbar />
+                <main className="pt-16 h-full">
+                  {children}
+                </main>
+              </DynamicBackground>
+            </div>
           </ThemeProvider>
         </AuthProvider>
       </body>

@@ -20,12 +20,8 @@ interface User {
 }
 
 interface AuthContextType {
-  user: User | null
   location: User['location']
   preferences: User['preferences']
-  isAuthenticated: boolean
-  login: (email: string, password: string, isGuest: boolean) => Promise<boolean>
-  logout: () => void
   updateLocation: (location: User['location']) => void
   updatePreferences: (preferences: Partial<User['preferences']>) => void
 }
@@ -33,8 +29,6 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [location, setLocation] = useState<User['location']>({
     city: 'Delhi',
     state: 'Delhi',
@@ -48,45 +42,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     notifications: true
   })
 
-  const login = async (email: string, password: string, isGuest: boolean) => {
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      if (isGuest || (email === 'farmer@example.com' && password === 'password123')) {
-        setIsAuthenticated(true)
-        setUser({
-          location,
-          preferences
-        })
-        return true
-      }
-      return false
-    } catch {
-      return false
-    }
-  }
-
-  const logout = () => {
-    setIsAuthenticated(false)
-    setUser(null)
-  }
-
   const updateLocation = (newLocation: User['location']) => {
     setLocation(newLocation)
-    if (user) {
-      setUser(prev => prev ? { ...prev, location: newLocation } : null)
-    }
   }
 
   const updatePreferences = (newPreferences: Partial<User['preferences']>) => {
-    setPreferences(prev => {
-      const updated = { ...prev, ...newPreferences }
-      if (user) {
-        setUser(prevUser => prevUser ? { ...prevUser, preferences: updated } : null)
-      }
-      return updated
-    })
+    setPreferences(prev => ({ ...prev, ...newPreferences }))
   }
 
   useEffect(() => {
@@ -96,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(savedPrefs)
         setPreferences(prev => ({ ...prev, ...parsed }))
-      } catch {
+      } catch (e) {
         console.error('Failed to parse saved preferences')
       }
     }
@@ -108,12 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [preferences])
 
   const value = {
-    user,
-    isAuthenticated,
     location,
     preferences,
-    login,
-    logout,
     updateLocation,
     updatePreferences
   }

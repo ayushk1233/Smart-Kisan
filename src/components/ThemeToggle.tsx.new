@@ -1,14 +1,20 @@
 "use client"
 
+import { useEffect } from 'react'
 import { Moon, Sun } from 'lucide-react'
-import { useTheme } from '@/contexts/ThemeContext'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { preferences, updatePreferences } = useAuth()
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light')
+    const newTheme = preferences.theme === 'light' ? 'dark' : 'light'
+    updatePreferences({ theme: newTheme })
   }
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', preferences.theme === 'dark')
+  }, [preferences.theme])
 
   return (
     <button
@@ -16,7 +22,7 @@ export function ThemeToggle() {
       className="relative h-10 w-10 rounded-full bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 p-0.5 shadow-lg transition-shadow hover:shadow-violet-500/25 dark:from-violet-400/25 dark:to-fuchsia-400/25"
     >
       <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-500">
-        {theme === 'dark' ? (
+        {preferences.theme === 'dark' ? (
           <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
         ) : (
           <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -24,7 +30,7 @@ export function ThemeToggle() {
       </span>
       <span className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-white/80 backdrop-blur-md transition-colors dark:bg-slate-950/80">
         <span className="relative z-10">
-          {theme === 'light' ? (
+          {preferences.theme === 'light' ? (
             <Sun className="h-4 w-4 text-amber-500 transition-transform hover:scale-110" />
           ) : (
             <Moon className="h-4 w-4 text-slate-300 transition-transform hover:scale-110" />

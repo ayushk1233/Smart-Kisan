@@ -2,160 +2,36 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
-export type Theme = 'light' | 'dark' | 'farmer-green' | 'farmer-amber' | 'farmer-nature'
+export type Theme = 'light' | 'dark'
 
 interface ThemeContextType {
   theme: Theme
   setTheme: (theme: Theme) => void
-  themes: { id: Theme; name: string; description: string; preview: string }[]
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-const themes = [
-  {
-    id: 'light' as Theme,
-    name: 'Light',
-    description: 'Clean white background',
-    preview: 'bg-white'
+// CSS variables for themes
+const themeVariables = {
+  light: {
+    background: '#ffffff',
+    foreground: '#0f172a', // Darker text for better contrast
+    card: '#ffffff',
+    cardForeground: '#0f172a', // Darker text for cards
+    muted: '#f1f5f9',
+    mutedForeground: '#475569' // Darker muted text
   },
-  {
-    id: 'dark' as Theme,
-    name: 'Dark',
-    description: 'Dark mode for night use',
-    preview: 'bg-slate-900'
-  },
-  {
-    id: 'farmer-green' as Theme,
-    name: 'Farmer Green',
-    description: 'Fresh green theme',
-    preview: 'bg-gradient-to-br from-green-50 to-emerald-50'
-  },
-  {
-    id: 'farmer-amber' as Theme,
-    name: 'Farmer Amber',
-    description: 'Warm amber theme',
-    preview: 'bg-gradient-to-br from-amber-50 to-orange-50'
-  },
-  {
-    id: 'farmer-nature' as Theme,
-    name: 'Nature',
-    description: 'Natural earth tones',
-    preview: 'bg-gradient-to-br from-amber-50 via-green-50 to-emerald-50'
+  dark: {
+    background: '#0f172a',
+    foreground: '#ffffff', // Brighter text for better readability
+    card: '#1e293b',
+    cardForeground: '#ffffff', // Brighter text for cards
+    muted: '#334155',
+    mutedForeground: '#cbd5e1' // Lighter muted text
   }
-]
-
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('farmer-nature')
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('agrisync-theme') as Theme
-    if (savedTheme && themes.find(t => t.id === savedTheme)) {
-      setTheme(savedTheme)
-    }
-  }, [])
-
-  // Sync theme with user preferences when user changes
-  useEffect(() => {
-    const savedUser = localStorage.getItem('agrisync-user')
-    if (savedUser) {
-      try {
-        const userData = JSON.parse(savedUser)
-        if (userData.preferences?.theme && themes.find(t => t.id === userData.preferences.theme)) {
-          setTheme(userData.preferences.theme)
-        }
-      } catch (error) {
-        console.error('Error parsing user data for theme sync:', error)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem('agrisync-theme', theme)
-    
-    console.log('Applying theme:', theme)
-    
-    // Apply theme to document body and html
-    const body = document.body
-    const html = document.documentElement
-    
-    // Clear existing theme classes
-    body.className = body.className.replace(/bg-\w+(-\d+)?/g, '').replace(/text-\w+(-\d+)?/g, '').replace(/dark/g, '').trim()
-    html.className = html.className.replace(/dark/g, '').trim()
-    
-    // Add Inter font class back
-    body.classList.add('font-sans', 'min-h-screen')
-    
-    switch (theme) {
-      case 'dark':
-        html.classList.add('dark')
-        // Apply dark theme CSS variables
-        document.documentElement.style.setProperty('--background', '#0f172a')
-        document.documentElement.style.setProperty('--foreground', '#f8fafc')
-        document.documentElement.style.setProperty('--card', '#1e293b')
-        document.documentElement.style.setProperty('--card-foreground', '#f8fafc')
-        document.documentElement.style.setProperty('--muted', '#334155')
-        document.documentElement.style.setProperty('--muted-foreground', '#94a3b8')
-        console.log('Dark theme CSS variables applied')
-        console.log('CSS Variables:', {
-          '--background': document.documentElement.style.getPropertyValue('--background'),
-          '--foreground': document.documentElement.style.getPropertyValue('--foreground'),
-          '--card': document.documentElement.style.getPropertyValue('--card'),
-          '--card-foreground': document.documentElement.style.getPropertyValue('--card-foreground'),
-          '--muted': document.documentElement.style.getPropertyValue('--muted'),
-          '--muted-foreground': document.documentElement.style.getPropertyValue('--muted-foreground')
-        })
-        break
-      case 'farmer-green':
-        // Apply farmer green theme CSS variables
-        document.documentElement.style.setProperty('--background', '#f0fdf4')
-        document.documentElement.style.setProperty('--foreground', '#1e293b')
-        document.documentElement.style.setProperty('--card', '#ffffff')
-        document.documentElement.style.setProperty('--card-foreground', '#1e293b')
-        document.documentElement.style.setProperty('--muted', '#f1f5f9')
-        document.documentElement.style.setProperty('--muted-foreground', '#64748b')
-        console.log('Farmer green theme CSS variables applied')
-        break
-      case 'farmer-amber':
-        // Apply farmer amber theme CSS variables
-        document.documentElement.style.setProperty('--background', '#fffbeb')
-        document.documentElement.style.setProperty('--foreground', '#1e293b')
-        document.documentElement.style.setProperty('--card', '#ffffff')
-        document.documentElement.style.setProperty('--card-foreground', '#1e293b')
-        document.documentElement.style.setProperty('--muted', '#f1f5f9')
-        document.documentElement.style.setProperty('--muted-foreground', '#64748b')
-        console.log('Farmer amber theme CSS variables applied')
-        break
-      case 'farmer-nature':
-        // Apply farmer nature theme CSS variables
-        document.documentElement.style.setProperty('--background', '#fefce8')
-        document.documentElement.style.setProperty('--foreground', '#1e293b')
-        document.documentElement.style.setProperty('--card', '#ffffff')
-        document.documentElement.style.setProperty('--card-foreground', '#1e293b')
-        document.documentElement.style.setProperty('--muted', '#f1f5f9')
-        document.documentElement.style.setProperty('--muted-foreground', '#64748b')
-        console.log('Farmer nature theme CSS variables applied')
-        break
-      default: // light
-        // Apply light theme CSS variables
-        document.documentElement.style.setProperty('--background', '#ffffff')
-        document.documentElement.style.setProperty('--foreground', '#1e293b')
-        document.documentElement.style.setProperty('--card', '#ffffff')
-        document.documentElement.style.setProperty('--card-foreground', '#1e293b')
-        document.documentElement.style.setProperty('--muted', '#f1f5f9')
-        document.documentElement.style.setProperty('--muted-foreground', '#64748b')
-        console.log('Light theme CSS variables applied')
-    }
-  }, [theme])
-
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme, themes }}>
-      {children}
-    </ThemeContext.Provider>
-  )
 }
 
-export function useTheme() {
+export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext)
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider')
@@ -163,20 +39,35 @@ export function useTheme() {
   return context
 }
 
-// Debug function to check CSS variables
-export function debugThemeVariables() {
-  const root = document.documentElement
-  const computedStyle = getComputedStyle(root)
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<Theme>('light')
+
+  // Load theme from localStorage on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as Theme
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+      setTheme(savedTheme)
+    }
+  }, [])
+
+  // Update theme and save to localStorage
+  useEffect(() => {
+    localStorage.setItem('theme', theme)
+    
+    const variables = themeVariables[theme]
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+    
+    Object.entries(variables).forEach(([key, value]) => {
+      const cssKey = `--${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}`
+      document.documentElement.style.setProperty(cssKey, value)
+    })
+  }, [theme])
+
+  const value = { theme, setTheme }
   
-  console.log('Current CSS Variables:', {
-    '--background': computedStyle.getPropertyValue('--background'),
-    '--foreground': computedStyle.getPropertyValue('--foreground'),
-    '--card': computedStyle.getPropertyValue('--card'),
-    '--card-foreground': computedStyle.getPropertyValue('--card-foreground'),
-    '--muted': computedStyle.getPropertyValue('--muted'),
-    '--muted-foreground': computedStyle.getPropertyValue('--muted-foreground')
-  })
-  
-  console.log('Computed Background Color:', getComputedStyle(document.body).backgroundColor)
-  console.log('Computed Text Color:', getComputedStyle(document.body).color)
+  return (
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
+  )
 }
